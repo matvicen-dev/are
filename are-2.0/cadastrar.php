@@ -16,6 +16,51 @@ include_once 'conexao.php';
     <meta charset="UTF-8">
     <title>Are - Login com token e cookie - Cadastrar</title>
 </head>
+<style>
+    body{
+        background: #23355F;
+        text-align: center;
+        margin: 12% auto;
+    }
+    label{
+        color: #85A4F5;
+        font-size: 20px;
+        /* background: green; */
+        display: flex;
+        /* align-items: start;*/
+        justify-content: center;
+        position: relative;
+        border-radius: 10px;
+        text-align: center;
+        margin: auto;
+    }
+    .inp{height: 20px;
+        width: 250px;
+        color: black;
+        font-size: 13px;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        border-radius: 10px;
+        text-align: start;
+        margin: auto;
+    }
+    .sub{
+        height: 30px;
+        width: 100px;
+        font-size: 15px;
+        border-radius: 5px;
+    }
+    .sub:hover{
+        weight: bold;
+        background-color: #85A4F5;
+        color: white;
+        border: 3px solid black;
+    }
+    a{
+        color: #85A4F5;
+    }
+</style>
 <body>
     <h1>Cadastrar</h1>
 
@@ -63,15 +108,15 @@ include_once 'conexao.php';
     <!-- Início do formulário cadastrar usuário -->
     <form method="POST" action="">
         <label>Nome: </label>
-        <input type="text" name="nome" placeholder="Nome completo"><br><br>
+        <input class="inp" type="text" name="nome" placeholder="Nome completo"><br>
         
         <label>E-mail: </label>
-        <input type="email" name="email" placeholder="Seu melhor e-mail"><br><br>
+        <input class="inp" type="email" name="email" placeholder="E-mail"><br>
         
         <label>Senha: </label>
-        <input type="password" name="senha" placeholder="Senha com mínimo 6 caracteres"><br><br>
+        <input class="inp" type="password" name="senha" placeholder="Mínimo 6 caracteres"><br><br>
 
-        <input type="submit" name="SendCadUser" value="Cadastrar"><br><br>
+        <input class="sub" type="submit" name="SendCadUser" value="Cadastrar"><br><br>
     </form>
     <!-- Fim do formulário cadastrar usuário -->
 

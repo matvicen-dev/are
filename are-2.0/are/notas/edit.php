@@ -8,11 +8,10 @@ ob_start();
 // Inclusão da conexão com o BD
 include '../../conexao.php';
 
-// Incluir o arquivo para validar e recuperar dados do token
-include_once '../../validar_token.php';
+$id = filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
+//var_dump($id);
 
-// Chamar a função validar o token, se a função retornar FALSE significa que o token é inválido e acessa o IF
-if(!validarToken()){
+if(empty($id)){
     // Criar a mensagem de erro e atribuir para variável global
     $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Necessário realizar o login para acessar a página!</p>";
 
@@ -22,31 +21,54 @@ if(!validarToken()){
     // Pausar o processamento da página
     exit();
 }
- 
-  $nome = recuperarNomeToken();
-  //print_r($nome);
-  $id = recuperarIdToken();
-  //print_r($id);
 
-  // Receber os dados do formulario
-  $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-  //var_dump($dados);
+$query_nota = "SELECT id_nota, campo_nota FROM notas WHERE id_nota = $id LIMIT 1";
+$result_nota = $conn->prepare($query_nota);
+$result_nota->execute();
 
-  // Verificar se o usuario clicou no botão e salva o formulario no BD
-  if(!empty($dados['ok'])){
-    $query_usuario = "INSERT INTO notas 
-                (campo_nota, usuario_id) VALUES
-                (:campo_nota, :usuario_id)";
-    $cad_nota = $conn->prepare($query_usuario);
-    $cad_nota->bindParam(':campo_nota', $dados['note-content']);
-    $cad_nota->bindParam(':usuario_id', $id);
-    $cad_nota->execute();
+if(($result_nota) AND ($result_nota->rowCount() != 0)){
+    $row_nota = $result_nota->fetch(PDO::FETCH_ASSOC);
+    //var_dump($row_nota);
+}else{
+    //Criar a mensagem de erro e atribuir para variável global
+    $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Nota não encontrada!</p>";
 
-  }else{
-    //echo "Erro";
-  }
+    // Redireciona o o usuário para o arquivo index.php
+    header("Location: index.php");
 
-  
+    // Pausar o processamento da página
+    exit();
+}
+// if(($result_nota) AND ($result_nota->rowCount() != 0)){
+//     $query_del_nota = "DELETE FROM notas WHERE id_nota = $id";
+//     $apagar_nota = $conn->prepare($query_del_nota);
+    
+//     if($apagar_nota->execute()){
+//         // Criar a mensagem de erro e atribuir para variável global
+//         $_SESSION['msg'] = "<p style='color: green;'>Erro: Nota apagada com sucesso!</p>";
+
+//     }else{
+//         // Criar a mensagem de erro e atribuir para variável global
+//         $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Nota não foi apagada com sucesso!</p>";
+
+//         // Redireciona o o usuário para o arquivo index.php
+//         header("Location: index.php");
+
+//         // Pausar o processamento da página
+//         exit();
+//     }
+// }else{
+//     // Criar a mensagem de erro e atribuir para variável global
+//     $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Nota não foi apagada com sucesso!</p>";
+
+//     // Redireciona o o usuário para o arquivo index.php
+//     header("Location: index.php");
+
+//     // Pausar o processamento da página
+//     exit();
+// }
+//     header('Location: index.php');
+   
 ?>
 
 <!DOCTYPE html>
@@ -286,13 +308,48 @@ if(!validarToken()){
     
   </div> -->
   <div class="form">
+
+  <?php
+    //Recebe os dados do formulário
+    $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+    //var_dump($dados);
+
+    //Verifica se o usuário clicou no botão
+    if(!empty($dados['ok'])){
+        var_dump($dados);
+        $empty_input = false;
+        $dados = array_map('trim', $dados);
+        if(in_array("", $dados)){            
+            $empty_input = true;
+            echo "<p style='color: #f00;'>Erro: Necessário preencer todos os campos!</p>";
+        }
+
+        if(!$empty_input){
+            $query_up_nota = "UPDATE notas SET campo_nota=:campo_nota WHERE id_nota=:id_nota";
+            $edit_nota = $conn->prepare($query_up_nota);
+            $edit_nota->bindParam(':campo_nota', $dados['note-content']);
+            $edit_nota->bindParam(':id_nota', $id);
+            if($edit_nota->execute()){
+                $_SESSION['msg'] = "<p style='color: green;'Nota editada com sucesso!</p>";  
+                header('Location: index.php');
+            }else{
+                $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Nota não editada com sucesso!</p>";    
+            }
+        }        
+    }
+  ?>
+
     <form  class="formulario" method="POST">  
-      <input class="note_content" type="text" id="note-content" name="note-content" placeholder="Sua nota" />
+      <input class="note_content" type="text" id="note-content" name="note-content" placeholder="Sua nota" 
+            value="<?php 
+            if(isset($dados['note-content'])){
+                echo $dados['note-content'];
+            }elseif(isset($row_nota['campo_nota'])) {echo $row_nota['campo_nota'];} ?>" required>
       <input class="enviar" type="submit" name="ok" value="ok" id="ok">
     </form>
   </div>
     <div class="table-div">
-      <table class="table">
+      <!-- <table class="table">
             <thead>
                 <tr>
                     <th class="th" scope="col">#</th>
@@ -301,7 +358,7 @@ if(!validarToken()){
                     <th class="th" scope="col">Menu</th>
                 </tr>
             </thead>
-            <tbody id="tabela-notas">
+            <tbody id="tabela-notas"> -->
                 <?php
                 $selecionaLogado = "SELECT * FROM notas WHERE $id = usuario_id";
                 try{

@@ -13,8 +13,54 @@ include_once 'conexao.php';
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Are - Login com token e cookie</title>
+    <title>Are - Login</title>
 </head>
+<style>
+    body{
+        background: #23355F;
+        text-align: center;
+        margin: 12% auto;
+    }
+    label{
+        color: #85A4F5;
+        font-size: 20px;
+        /* background: green; */
+        display: flex;
+        /* align-items: start;*/
+        justify-content: center;
+        position: relative;
+        border-radius: 10px;
+        text-align: center;
+        margin: auto;
+    }
+    .inp{
+        height: 20px;
+        width: 250px;
+        color: black;
+        font-size: 13px;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        border-radius: 10px;
+        text-align: start;
+        margin: auto;
+    }
+    .sub{
+        height: 30px;
+        width: 100px;
+        font-size: 15px;
+        border-radius: 5px;
+    }
+    .sub:hover{
+        weight: bold;
+        background-color: #85A4F5;
+        color: white;
+        border: 3px solid black;
+    }
+    a{
+        color: #85A4F5;
+    }
+</style>
 <body>
     <?php
     // Exemplo criptografar a senha
@@ -153,8 +199,8 @@ if (isset($dados['usuario'])) {
     $usuario = $dados['usuario'];
 }
 ?>
-        <label>Usuário: </label>
-        <input type="text" name="usuario" placeholder="Digite o usuário" value="<?php echo $usuario; ?>"><br><br>
+        <label >Usuário: </label>
+        <input class="inp" type="text" name="usuario" placeholder="Digite o usuário" value="<?php echo $usuario; ?>"><br>
 
         <?php
     $senha = "";
@@ -163,9 +209,9 @@ if (isset($dados['senha'])) {
 }
 ?>        
         <label>Senha: </label>
-        <input type="password" name="senha" placeholder="Digite a senha" value="<?php echo $senha; ?>"><br><br>
+        <input class="inp" type="password" name="senha" placeholder="Digite a senha" value="<?php echo $senha; ?>"><br><br>
 
-        <input type="submit" name="SendLogin" value="Acessar"><br><br>
+        <input class="sub" type="submit" name="SendLogin" value="Acessar"><br><br>
 
     </form>
     <!-- Fim do formulário de login -->
