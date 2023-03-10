@@ -38,37 +38,7 @@ if(($result_nota) AND ($result_nota->rowCount() != 0)){
 
     // Pausar o processamento da página
     exit();
-}
-// if(($result_nota) AND ($result_nota->rowCount() != 0)){
-//     $query_del_nota = "DELETE FROM notas WHERE id_nota = $id";
-//     $apagar_nota = $conn->prepare($query_del_nota);
-    
-//     if($apagar_nota->execute()){
-//         // Criar a mensagem de erro e atribuir para variável global
-//         $_SESSION['msg'] = "<p style='color: green;'>Erro: Nota apagada com sucesso!</p>";
-
-//     }else{
-//         // Criar a mensagem de erro e atribuir para variável global
-//         $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Nota não foi apagada com sucesso!</p>";
-
-//         // Redireciona o o usuário para o arquivo index.php
-//         header("Location: index.php");
-
-//         // Pausar o processamento da página
-//         exit();
-//     }
-// }else{
-//     // Criar a mensagem de erro e atribuir para variável global
-//     $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Nota não foi apagada com sucesso!</p>";
-
-//     // Redireciona o o usuário para o arquivo index.php
-//     header("Location: index.php");
-
-//     // Pausar o processamento da página
-//     exit();
-// }
-//     header('Location: index.php');
-   
+}   
 ?>
 
 <!DOCTYPE html>

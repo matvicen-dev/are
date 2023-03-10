@@ -295,9 +295,9 @@ if(!validarToken()){
       <table class="table">
             <thead>
                 <tr>
-                    <th class="th" scope="col">#</th>
+                    <!-- <th class="th" scope="col">#</th> -->
                     <th class="th" scope="col">Nota</th>
-                    <th class="th" scope="col">Id do Usuário</th>
+                    <!-- <th class="th" scope="col">Id do Usuário</th> -->
                     <th class="th" scope="col">Menu</th>
                 </tr>
             </thead>
@@ -313,9 +313,9 @@ if(!validarToken()){
                   if($contar =1){
                     $loop = $result->fetchAll();
                     foreach ($loop as $show){
-                      $id_nota = $show['id_nota'];
+                      // $id_nota = $show['id_nota'];
                       $nota_salva = $show['campo_nota'];
-                      $user_id = $show['usuario_id'];
+                      // $user_id = $show['usuario_id'];
                     }
                   }
                 }catch (PDOWException $erro){ echo $erro;}
@@ -329,12 +329,12 @@ if(!validarToken()){
 
                 while($row_msg_count = $resultado_msg_cont->fetch(PDO::FETCH_ASSOC)) {                  
                           echo "<tr>";
-                          echo "<td>".$row_msg_count['id_nota']."</td>";
+                          // echo "<td>".$row_msg_count['id_nota']."</td>";
                           echo "<td>".$row_msg_count['campo_nota']."</td>";
-                          echo "<td>".$row_msg_count['usuario_id']."</td>";
+                          // echo "<td>".$row_msg_count['usuario_id']."</td>";
                           echo "<td>
-                            <a href='edit.php?id=$row_msg_count[id_nota]'>Editar</a>
-                            <a href='delete.php?id=$row_msg_count[id_nota]'>Apagar</a>
+                            <a href='edit_nota.php?id=$row_msg_count[id_nota]'>Editar</a>
+                            <a href='delete_nota.php?id=$row_msg_count[id_nota]'>Apagar</a>
                           </td>";
                           echo "</tr>";
                     
