@@ -272,11 +272,6 @@ if(($result_nota) AND ($result_nota->rowCount() != 0)){
     <a class="export-notes return" href="../menu/index.php">Voltar</a>
   </header>
 
-  <!-- <div id="add-note-container">
-    <input type="text" id="note-content" name="note-content" placeholder="O que deseja anotar?" />
-    <button class="add-note" id="add-note" name="add-note"><i class="bi bi-plus-lg"></i></button>
-    
-  </div> -->
   <div class="form">
 
   <?php
@@ -319,16 +314,7 @@ if(($result_nota) AND ($result_nota->rowCount() != 0)){
     </form>
   </div>
     <div class="table-div">
-      <!-- <table class="table">
-            <thead>
-                <tr>
-                    <th class="th" scope="col">#</th>
-                    <th class="th" scope="col">Nota</th>
-                    <th class="th" scope="col">Id do Usuário</th>
-                    <th class="th" scope="col">Menu</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-notas"> -->
+  
                 <?php
                 $selecionaLogado = "SELECT * FROM notas WHERE $id = usuario_id";
                 try{
@@ -346,11 +332,7 @@ if(($result_nota) AND ($result_nota->rowCount() != 0)){
                     }
                   }
                 }catch (PDOWException $erro){ echo $erro;}
-
-                // SQL para selecionar os registros
-                //$result_msg_cont = "SELECT * FROM notas ORDER BY id_nota ASC";
-
-                // Seleciona os registros
+            
                 $resultado_msg_cont = $conn->prepare($selecionaLogado);
                 $resultado_msg_cont->execute();
 

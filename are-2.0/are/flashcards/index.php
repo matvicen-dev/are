@@ -8,10 +8,11 @@ ob_start();
 // Inclusão da conexão com o BD
 include '../../conexao.php';
 
-$id = filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
-//var_dump($id);
+// Incluir o arquivo para validar e recuperar dados do token
+include_once '../../validar_token.php';
 
-if(empty($id)){
+// Chamar a função validar o token, se a função retornar FALSE significa que o token é inválido e acessa o IF
+if(!validarToken()){
     // Criar a mensagem de erro e atribuir para variável global
     $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Necessário realizar o login para acessar a página!</p>";
 
@@ -22,23 +23,31 @@ if(empty($id)){
     exit();
 }
 
-$query_flashcard = "SELECT id_flashcard, front, back FROM flashcards WHERE id_flashcard = $id LIMIT 1";
-$result_flashcard = $conn->prepare($query_flashcard);
-$result_flashcard->execute();
+  //$nome = recuperarNomeToken();
+  //print_r($nome);
+  $id = recuperarIdToken();
+  // print_r($timer);
 
-if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
-    $row_flashcard = $result_flashcard->fetch(PDO::FETCH_ASSOC);
-    //var_dump($row_flashcard);
-}else{
-    //Criar a mensagem de erro e atribuir para variável global
-    $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Flashcard não encontrado!</p>";
+  // Receber os dados do formulario
+  $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+  //var_dump($dados);
 
-    // Redireciona o o usuário para o arquivo index.php
-    header("Location: index.php");
+  // Verificar se o usuario clicou no botão e salva o formulario no BD
+  if(!empty($dados['save-btn'])){
+    $query_usuario = "INSERT INTO flashcards 
+                (front, back, usuario_id, hora) VALUES
+                (:front, :back, :usuario_id, DATE_ADD(CURRENT_TIME, INTERVAL 0 HOUR))";
+    $cad_flashcard = $conn->prepare($query_usuario);
+    $cad_flashcard->bindParam(':front', $dados['question']);
+    $cad_flashcard->bindParam(':back', $dados['answer']);
+    //$cad_flashcard->bindParam(':timer', $timer);
+    $cad_flashcard->bindParam(':usuario_id', $id);
+    //$cad_flashcard->bindParam(':hora', $hora);
+    $cad_flashcard->execute();
 
-    // Pausar o processamento da página
-    exit();
-}
+  }else{
+    //echo "Erro";
+  }  
 ?>
 
 <!DOCTYPE html>
@@ -46,13 +55,14 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flashcards Edit</title>
+  <title>Flashcards</title>
   <!-- Fontes -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
   <!-- Google Fontes -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
-  <!-- Stylesheet -->
-  <!-- <link rel="stylesheet" href="style-flashcards.css" /> -->
+  <!-- Google Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ 
 </head>
 
 <style>
@@ -71,7 +81,7 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 1.2em 1em;
+    padding: 1.2em 1em;    
   }
 
   button {
@@ -136,6 +146,7 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
     padding: 3em 2em;
     border-radius: 0.6em;
     box-shadow: 0 1em 2em rgba(28, 0, 80, 0.1);
+    border: 1px solid black;
   }
 
   .question-container h2 {
@@ -307,10 +318,10 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
    .form{
     background-color: yellow;
     display: flex;
-    flex-direction: row;
+    flex-direction: row;  
     justify-content: center;
     align-items: center;
-  }
+  } 
   .form form{
     background-color: white;
     border: 1px solid blue;
@@ -321,10 +332,11 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
     width: 200px;
     height: 50px;
   }
-  .enviar{
+  .enviar{    
     margin-top: 10px;
     width: 100px;
     height: 25px;
+
   }
   .table-div{
     display: flex;
@@ -336,80 +348,44 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
   }
   .th{
     background-color: #85A4F5;
-  }
-  .sair{
-    background-color: black;
-    color: white;
-    text-decoration: none;
-    margin: 0 auto;
-	display: block;
-	border-radius: 50%;
-	height: 40px;
-	width: 40px;
-	display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-  }
-  .sair:hover{
-    background-color: white;
-    color: black;
-    border: 1px solid black;
-    cursor: pointer;
-  }
+  } 
   .enviar{
     background-color: black;
     color: white;
-	display: block;
-	border-radius: 5px;
-	height: 40px;
-	width: 80px;
-	display: flex;
+    display: block;
+    border-radius: 5px;
+    height: 40px;
+    width: 80px;
+    display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
   }
   .enviar:hover{
+    background-color: white;
+    color: black;
+    border: 1px solid black;
     cursor:pointer;
   }
 </style>
 
 <body>
+  <div class="container">
+    <div class="add-flashcard-con">
+      <button id="add-flashcard">Adicionar Flashcard</button>
+      <a href="estudar.php">Estudar</a>
+      <a href="../menu/index.php">Voltar</a>
+    </div>
 
-<?php
-    //Recebe os dados do formulário
-    $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-    //var_dump($dados);
-
-    //Verifica se o usuário clicou no botão
-    if(!empty($dados['save-btn'])){
-        var_dump($dados);
-        $empty_input = false;
-        $dados = array_map('trim', $dados);
-        if(in_array("", $dados)){
-            $empty_input = true;
-            echo "<p style='color: #f00;'>Erro: Necessário preencer todos os campos!</p>";
-        }
-
-        if(!$empty_input){
-            $query_up_flashcard = "UPDATE flashcards SET front=:front, back=:back WHERE id_flashcard=:id_flashcard";
-            $edit_flashcard = $conn->prepare($query_up_flashcard);
-            $edit_flashcard->bindParam(':front', $dados['question']);
-            $edit_flashcard->bindParam(':back', $dados['answer']);
-            $edit_flashcard->bindParam(':id_flashcard', $id);
-            if($edit_flashcard->execute()){
-                $_SESSION['msg'] = "<p style='color: green;'Flashcard editado com sucesso!</p>";
-                header('Location: index.php');
-            }else{
-                $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Flashcard não editado com sucesso!</p>";
-            }
-        }
-    }
-  ?>
+    <!-- Exibir cartão de perguntas e respostas aqui -->
+    <div id="card-con">
+      <div class="card-list-container"></div>
+    </div>
+  </div>
 
   <!-- Formulário de entrada para os usuários preencherem perguntas e respostas -->
   <form  class="formulario" method="POST">
-    <div class="question-container" id="add-question-card">
+    <div class="question-container hide" id="add-question-card">
       <h2>Adicionar Flashcard</h2>
       <div class="wrapper">
         <!-- Mensagem de erro -->
@@ -417,24 +393,73 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
           <span class="hide" id="error">Os campos de entrada não podem estar vazios!</span>
         </div>
         <!-- Botão Fechar -->
-        <a class="sair" href="index.php">X</a>
+        <i class="fa-solid fa-xmark" id="close-btn"></i>
       </div>
 
       <label for="question">Pergunta:</label>
-      <input class="input" id="question" name="question" placeholder="Digite a pergunta aqui..." rows="2"
-      value="<?php
-            if(isset($dados['question'])){
-                echo $dados['question'];
-            }elseif(isset($row_flashcard['front'])) {echo $row_flashcard['front'];} ?>" required></input><br>
+      <textarea class="input" id="question" name="question" placeholder="Digite a pergunta aqui..." rows="4"></textarea>
       <label for="answer">Resposta:</label>
-      <input class="input" id="answer" name="answer" rows="4" placeholder="Digite a resposta aqui..."
-      value="<?php
-            if(isset($dados['answer'])){
-                echo $dados['answer'];
-            }elseif(isset($row_flashcard['back'])) {echo $row_flashcard['back'];} ?>" required></input>
-      <input class="enviar" type="submit" name="save-btn" value="Salvar" id="save-btn">
+      <textarea class="input" id="answer" name="answer" rows="4" placeholder="Digite a resposta aqui..."></textarea>
+      <!-- <button id="save-btn">Salvar</button> -->
+      <!-- <div id="timer" name="timer"></div> -->
+      <!-- <button onclick="startTimer()" id="timer" name="timer">Timer</button> -->
+      <input class="enviar" type="submit" name="save-btn" value="Salvar" id="ok">
     </div>
   </form>
+
+  <div class="table-div">
+      <table class="table">
+            <thead>
+                <tr>
+                    <!-- <th class="th" scope="col">#</th> -->
+                    <th class="th" scope="col">Pergunta</th>
+                    <th class="th" scope="col">Resposta</th>
+                    <!-- <th class="th" scope="col">Id do Usuário</th> -->
+                    <th class="th" scope="col">Menu</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-flashcards">
+                <?php
+                $selecionaLogado = "SELECT * FROM flashcards WHERE $id = usuario_id";
+                try{
+                  $result = $conn->prepare($selecionaLogado);
+                  //$result->bindParam('')
+                  $result->execute();
+                  $contar = $result->rowCount();
+
+                  if($contar =1){
+                    $loop = $result->fetchAll();
+                    foreach ($loop as $show){
+                      // $id_flashcard = $show['id_flashcard'];
+                      $front = $show['front'];
+                      $back = $show['back'];
+                      // $user_id = $show['usuario_id'];
+                    }
+                  }
+                }catch (PDOWException $erro){ echo $erro;}
+                
+                $resultado_msg_cont = $conn->prepare($selecionaLogado);
+                $resultado_msg_cont->execute();
+
+                while($row_msg_count = $resultado_msg_cont->fetch(PDO::FETCH_ASSOC)) {                  
+                          echo "<tr>";
+                          // echo "<td>".$row_msg_count['id_flashcard']."</td>";
+                          echo "<td>".$row_msg_count['front']."</td>";
+                          echo "<td>".$row_msg_count['back']."</td>";
+                          // echo "<td>".$row_msg_count['usuario_id']."</td>";
+                          echo "<td>
+                            <a href='edit_fc.php?id=$row_msg_count[id_flashcard]' title='Editar'><span class='material-icons'>mode_edit</span></a>
+                            <a href='delete_fc.php?id=$row_msg_count[id_flashcard]' title='Apagar'><span class='material-icons'>delete_forever</span></a>
+                          </td>";
+                          echo "</tr>";                    
+                     }                         
+                                                                    
+                ?>
+                <!-- <script src="teste.js"></script> -->
+                <!-- <script src="./js/scripts.js" defer></script> -->
+            </tbody>
+        </table>  
+     </div> <!-- end table-div -->
 
   <!-- Script -->
   <script src="script-flashcards.js"></script>

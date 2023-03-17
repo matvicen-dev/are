@@ -16,7 +16,7 @@ if(empty($id)){
     $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Necessário realizar o login para acessar a página!</p>";
 
     // Redireciona o o usuário para o arquivo index.php
-    header("Location: flashcards.php");
+    header("Location: index.php");
 
     // Pausar o processamento da página
     exit();
@@ -39,7 +39,7 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
         $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Flashcard não foi apagada com sucesso!</p>";
 
         // Redireciona o o usuário para o arquivo index.php
-        header("Location: flashcards.php");
+        header("Location: index.php");
 
         // Pausar o processamento da página
         exit();
@@ -49,11 +49,11 @@ if(($result_flashcard) AND ($result_flashcard->rowCount() != 0)){
     $_SESSION['msg'] = "<p style='color: #f00;'>Erro: Flashcard não foi apagada com sucesso!</p>";
 
     // Redireciona o o usuário para o arquivo index.php
-    header("Location: flashcards.php");
+    header("Location: index.php");
 
     // Pausar o processamento da página
     exit();
 }
-    header('Location: flashcards.php');
+    header('Location: index.php');
    
 ?>

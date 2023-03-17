@@ -66,7 +66,7 @@ include_once 'conexao.php';
     // Exemplo criptografar a senha
     // echo password_hash('123456', PASSWORD_DEFAULT);
 ?>
-    <h1>Login</h1>
+    <h1>ARE</h1>
 
     <?php
     // Receber os dados do formulário
@@ -216,7 +216,7 @@ if (isset($dados['senha'])) {
     </form>
     <!-- Fim do formulário de login -->
 
-    <a href="cadastrar.php">Cadastrar</a>
+    <span style="color: white;">Não possui conta?</span> <a href="cadastrar.php">Cadastrar</a>
 
     <br><br>
     

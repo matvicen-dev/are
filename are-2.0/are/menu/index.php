@@ -1,3 +1,15 @@
+<?php
+
+session_start(); // Iniciar a sessão
+
+// Limpara o buffer de redirecionamento
+ob_start();
+
+// Incluir o arquivo para validar e recuperar dados do token
+include_once '../../validar_token.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -15,11 +27,12 @@ body {
     background-color: #23355F;
 }
 
-header {
+.cabecalho {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
+    padding: 24px;
 }
 
 .link-button {
@@ -43,17 +56,6 @@ header {
     font-weight: bold;
 }
 
-/* .two {
-    background: #fdfdfd;
-    color: black;
-    border: 2px solid #333;
-}
-
-.two:hover {
-    background-color: #000000;
-    color: #ffffff;
-    transition: backgrouns 1s;
-} */
 header{
     display: flex;
     flex-direction: row;
@@ -79,12 +81,15 @@ header{
 
 }
 
-
 </style>
 
 <body>
-    <header>
-        
+    <header class="cabecalho">
+        <span style="color:white;">
+            <?php
+                echo "Bem vindo " . recuperarNomeToken() . "!";
+            ?>
+        </span>
         <div>
             <?php
             
@@ -95,7 +100,7 @@ header{
         </div>
     </header>
     <div class="main">
-        <a class="link-button" href="../flashcards/flashcards.php">Flashcards</a>
+        <a class="link-button" href="../flashcards/index.php">Flashcards</a>
         <a class="link-button" href="../notas/index.php">Notas</a>
     </div>
 </body>

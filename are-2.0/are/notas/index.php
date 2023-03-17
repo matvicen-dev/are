@@ -60,8 +60,8 @@ if(!validarToken()){
   <link rel="stylesheet" href="./css/styles.css" />
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" />
-  <!-- JavaScript -->
-  <!-- <script src="./js/scripts.js" defer></script> -->
+  <!-- Google Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <title>ARE</title>  
 </head>
 <style>
@@ -69,16 +69,15 @@ if(!validarToken()){
     background-color: #23355F;
   }
 
-  /* Cabeçalho */
-
   header {
-    border-bottom: 1px solid #17181a;
     padding: 1rem 2rem;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: space-around;
-    box-shadow: 0px 2px 5px #17181a;
+  }
+  .topo{
+    border:none;
   }
 
   #search-container {
@@ -268,7 +267,7 @@ if(!validarToken()){
 </style>
 
 <body>
-  <header>
+  <header class="topo">
     <h1>NOTAS</h1>
     <div id="search-container">
       <i class="bi bi-search"></i>
@@ -333,8 +332,8 @@ if(!validarToken()){
                           echo "<td>".$row_msg_count['campo_nota']."</td>";
                           // echo "<td>".$row_msg_count['usuario_id']."</td>";
                           echo "<td>
-                            <a href='edit_nota.php?id=$row_msg_count[id_nota]'>Editar</a>
-                            <a href='delete_nota.php?id=$row_msg_count[id_nota]'>Apagar</a>
+                            <a href='edit_nota.php?id=$row_msg_count[id_nota]' title='Editar'><span class='material-icons'>mode_edit</span></a>
+                            <a href='delete_nota.php?id=$row_msg_count[id_nota]' title='Apagar'><span class='material-icons'>delete_forever</span></a>
                           </td>";
                           echo "</tr>";
                     

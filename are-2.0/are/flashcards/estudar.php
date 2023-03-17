@@ -23,10 +23,6 @@ if(!validarToken()){
     exit();
 }
 
-
-
-
- 
   //$nome = recuperarNomeToken();
   //print_r($nome);
   $id = recuperarIdToken();
@@ -36,23 +32,6 @@ if(!validarToken()){
   $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
   //var_dump($dados);
 
-  // Verificar se o usuario clicou no botão e salva o formulario no BD
-  if(!empty($dados['save-btn'])){
-    $query_usuario = "INSERT INTO flashcards 
-                (front, back, usuario_id) VALUES
-                (:front, :back, :usuario_id)";
-    $cad_flashcard = $conn->prepare($query_usuario);
-    $cad_flashcard->bindParam(':front', $dados['question']);
-    $cad_flashcard->bindParam(':back', $dados['answer']);
-    //$cad_flashcard->bindParam(':timer', $timer);
-    $cad_flashcard->bindParam(':usuario_id', $id);
-    $cad_flashcard->execute();
-
-  }else{
-    //echo "Erro";
-  }
-
-  
 ?>
 
 <!DOCTYPE html>
@@ -65,8 +44,9 @@ if(!validarToken()){
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
   <!-- Google Fontes -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
-  <!-- Stylesheet -->
-  <!-- <link rel="stylesheet" href="style-flashcards.css" /> -->
+  <!-- Google Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ 
 </head>
 
 <style>
@@ -370,45 +350,42 @@ if(!validarToken()){
     border: 1px solid black;
     cursor:pointer;
   }
+  #verde{
+    background-color: green;
+    color: black;
+    border-radius: 3px;
+    text-decoration: none;
+    padding: 3px;
+    border: 1px solid black;
+    font-weight: bold;
+  }
+  #amarelo{
+    background-color: yellow;
+    color: black;
+    border-radius: 3px;
+    text-decoration: none;
+    padding: 3px;
+    border: 1px solid black;
+    font-weight: bold;
+  }
+  #vermelho{
+    background-color: red;
+    color: black;
+    border-radius: 3px;
+    text-decoration: none;
+    padding: 3px;
+    border: 1px solid black;
+    font-weight: bold;
+  }
+  #resposta{
+    filter: blur(5px);
+  }
+  #resposta:hover{
+    filter:none;
+  }
 </style>
 
 <body>
-  <div class="container">
-    <div class="add-flashcard-con">
-      <button id="add-flashcard">Adicionar Flashcard</button>
-      <a href="../menu/index.php">Voltar</a>
-    </div>
-
-    <!-- Exibir cartão de perguntas e respostas aqui -->
-    <div id="card-con">
-      <div class="card-list-container"></div>
-    </div>
-  </div>
-
-  <!-- Formulário de entrada para os usuários preencherem perguntas e respostas -->
-  <form  class="formulario" method="POST">
-    <div class="question-container hide" id="add-question-card">
-      <h2>Adicionar Flashcard</h2>
-      <div class="wrapper">
-        <!-- Mensagem de erro -->
-        <div class="error-con">
-          <span class="hide" id="error">Os campos de entrada não podem estar vazios!</span>
-        </div>
-        <!-- Botão Fechar -->
-        <i class="fa-solid fa-xmark" id="close-btn"></i>
-      </div>
-
-      <label for="question">Pergunta:</label>
-      <textarea class="input" id="question" name="question" placeholder="Digite a pergunta aqui..." rows="4"></textarea>
-      <label for="answer">Resposta:</label>
-      <textarea class="input" id="answer" name="answer" rows="4" placeholder="Digite a resposta aqui..."></textarea>
-      <!-- <button id="save-btn">Salvar</button> -->
-      <!-- <div id="timer" name="timer"></div> -->
-      <!-- <button onclick="startTimer()" id="timer" name="timer">Timer</button> -->
-      <input class="enviar" type="submit" name="save-btn" value="Salvar" id="ok">
-    </div>
-  </form>
-
   <div class="table-div">
       <table class="table">
             <thead>
@@ -417,41 +394,64 @@ if(!validarToken()){
                     <th class="th" scope="col">Pergunta</th>
                     <th class="th" scope="col">Resposta</th>
                     <!-- <th class="th" scope="col">Id do Usuário</th> -->
-                    <th class="th" scope="col">Menu</th>
+                    <th class="th" scope="col">Opção</th>
                 </tr>
             </thead>
             <tbody id="tabela-flashcards">
                 <?php
-                $selecionaLogado = "SELECT * FROM flashcards WHERE $id = usuario_id";
+                //teste estudar
+                $hora_dif = "SELECT * FROM flashcards WHERE timestampdiff (HOUR, hora ,CURRENT_DATE)+14 > -24";
                 try{
-                  $result = $conn->prepare($selecionaLogado);
-                  //$result->bindParam('')
-                  $result->execute();
-                  $contar = $result->rowCount();
-
-                  if($contar =1){
-                    $loop = $result->fetchAll();
-                    foreach ($loop as $show){
-                      // $id_flashcard = $show['id_flashcard'];
-                      $front = $show['front'];
-                      $back = $show['back'];
-                      // $user_id = $show['usuario_id'];
+                    $result2 = $conn->prepare($hora_dif);
+                    $result2->execute();
+                    $contar2 = $result2->rowCount();
+                    // var_dump($result2);
+                    // var_dump($contar2);
+                    if($contar2 >0){
+                        $loop2 = $result2->fetchAll();
+                        foreach ($loop2 as $show2){
+                        // $id_flashcard = $show['id_flashcard'];
+                        $front = $show2['front'];
+                        $back = $show2['back'];
+                        // $user_id = $show['usuario_id'];
+                        }
+                    }else{
+                        header("Location: index.php");
                     }
-                  }
                 }catch (PDOWException $erro){ echo $erro;}
+
+
+                // $selecionaLogado = "SELECT * FROM flashcards WHERE $id = usuario_id";
+                // try{
+                //   $result = $conn->prepare($selecionaLogado);
+                //   //$result->bindParam('')
+                //   $result->execute();
+                //   $contar = $result->rowCount();
+
+                //   if($contar =1){
+                //     $loop = $result->fetchAll();
+                //     foreach ($loop as $show){
+                //       // $id_flashcard = $show['id_flashcard'];
+                //       $front = $show['front'];
+                //       $back = $show['back'];
+                //       // $user_id = $show['usuario_id'];
+                //     }
+                //   }
+                // }catch (PDOWException $erro){ echo $erro;}
                 
-                $resultado_msg_cont = $conn->prepare($selecionaLogado);
+                $resultado_msg_cont = $conn->prepare($hora_dif);
                 $resultado_msg_cont->execute();
 
                 while($row_msg_count = $resultado_msg_cont->fetch(PDO::FETCH_ASSOC)) {                  
                           echo "<tr>";
                           // echo "<td>".$row_msg_count['id_flashcard']."</td>";
                           echo "<td>".$row_msg_count['front']."</td>";
-                          echo "<td>".$row_msg_count['back']."</td>";
+                          echo "<td id='resposta'>".$row_msg_count['back']."</td>";
                           // echo "<td>".$row_msg_count['usuario_id']."</td>";
                           echo "<td>
-                            <a href='edit_fc.php?id=$row_msg_count[id_flashcard]'>Editar</a>
-                            <a href='delete_fc.php?id=$row_msg_count[id_flashcard]'>Apagar</a>
+                            <a id='verde' href='facil.php?id=$row_msg_count[id_flashcard]'>Fácil</a>
+                            <a id='amarelo' href='medio.php?id=$row_msg_count[id_flashcard]'>Médio</a>
+                            <a id='vermelho' href='dificil.php?id=$row_msg_count[id_flashcard]'>Difícil</a>
                           </td>";
                           echo "</tr>";                    
                      }                         
@@ -461,7 +461,7 @@ if(!validarToken()){
                 <!-- <script src="./js/scripts.js" defer></script> -->
             </tbody>
         </table>  
-     </div>
+     </div> <!-- end table-div -->
 
   <!-- Script -->
   <script src="script-flashcards.js"></script>
